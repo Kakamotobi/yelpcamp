@@ -22,6 +22,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // -----Middleware----- //
+app.use(express.urlencoded({ extended: true }));
 
 // -----Routes----- //
 app.get("/", (req, res) => {
@@ -32,6 +33,17 @@ app.get("/", (req, res) => {
 app.get("/campgrounds", async (req, res) => {
 	const campgrounds = await Campground.find({});
 	res.render("campgrounds/index.ejs", { campgrounds });
+});
+
+// Serve form to make new campground
+app.get("/campgrounds/new", (req, res) => {
+	res.render("campgrounds/new.ejs");
+});
+// Submit form to make new campground
+app.post("/campgrounds", async (req, res) => {
+	const campground = new Campground(req.body.campground);
+	await campground.save();
+	res.redirect(`/campgrounds/${campground._id}`);
 });
 
 // Campground Details
