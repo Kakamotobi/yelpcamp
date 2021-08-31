@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-const Campground = require("./models/campground");
+const Campground = require("./models/campground.js");
 
 const app = express();
 
@@ -28,13 +28,16 @@ app.get("/", (req, res) => {
 	res.render("home.ejs");
 });
 
-app.get("/makecampground", async (req, res) => {
-	const camp = new Campground({
-		title: "My Backyard",
-		description: "cheap camping",
-	});
-	await camp.save();
-	res.send(camp);
+// All Campgrounds
+app.get("/campgrounds", async (req, res) => {
+	const campgrounds = await Campground.find({});
+	res.render("campgrounds/index.ejs", { campgrounds });
+});
+
+// Campground Detail
+app.get("/campgrounds/:id", async (req, res) => {
+	const campground = await Campground.findById(req.params.id);
+	res.render("campgrounds/show.ejs", { campground });
 });
 
 // -----Port----- //
